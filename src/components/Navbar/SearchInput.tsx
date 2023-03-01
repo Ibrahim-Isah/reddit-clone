@@ -8,7 +8,7 @@ type SearchInputProps = {};
 const SearchInput = (props: SearchInputProps) => {
 	return (
 		<Flex flexGrow={1} mr={2} align='center'>
-			<Stack spacing={4}>
+			<Stack spacing={4} width={'100%'}>
 				<InputGroup>
 					<InputLeftElement
 						pointerEvents='none'
