@@ -5,23 +5,27 @@ import React from 'react';
 import { Community } from '../../../atoms/communitiesAtom';
 import { firestore } from '../../../firebase/clientApp';
 import safeJsonStringify from 'safe-json-stringify';
+import CommunityNotFound from '../../../components/Community/NotFound';
+import Header from '../../../components/Community/Header';
+import PageContent from '../../../components/Layout/PageContent';
 
 type Props = {
 	communityData: Community;
 };
 
 const CommunityPage = ({ communityData }: Props) => {
-	if (!communityData)
-		return (
-			<>
-				<div>Community not exist</div>
-			</>
-		);
+	if (!communityData) return <CommunityNotFound />;
 	return (
 		<>
-			<Flex>
-				<h1>{communityData.id}</h1>
-			</Flex>
+			<Header communityData={communityData} />
+			<PageContent>
+				<>
+					<div>LHS</div>
+				</>
+				<>
+					<div>RHS</div>
+				</>
+			</PageContent>
 		</>
 	);
 };
