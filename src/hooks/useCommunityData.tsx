@@ -7,7 +7,8 @@ import {
 } from 'firebase/firestore';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { authModalState } from '../atoms/authModalAtom';
 import {
 	Community,
 	CommunitySnippet,
@@ -17,6 +18,7 @@ import { auth, firestore } from '../firebase/clientApp';
 
 const useCommunityData = () => {
 	const [user] = useAuthState(auth);
+	const setAuthModalState = useSetRecoilState(authModalState);
 	const [loading, setLoading] = React.useState(false);
 	const [error, setError] = React.useState('');
 	const [communityStateValue, setCommunityStateValue] =
@@ -26,6 +28,15 @@ const useCommunityData = () => {
 		communityData: Community,
 		isJoined: boolean
 	) => {
+		if (!user) {
+			setAuthModalState({
+				open: true,
+				view: 'login',
+			});
+			return;
+		}
+
+		setLoading(true);
 		if (isJoined) {
 			leaveCommunity(communityData.id);
 			return;
