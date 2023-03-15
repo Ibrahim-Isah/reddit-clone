@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import {
+	Alert,
+	AlertIcon,
 	Flex,
 	Icon,
 	Image,
@@ -30,7 +32,7 @@ type Props = {
 	userVoteValue?: number;
 	onVote: () => void;
 	onSelectPost: () => void;
-	onDeletePost: () => void;
+	onDeletePost: (post: Post) => Promise<boolean>;
 };
 
 const PostItem = ({
@@ -42,6 +44,25 @@ const PostItem = ({
 	onDeletePost,
 }: Props) => {
 	const [loadingImage, setLoadingImage] = useState(true);
+	const [loadingDelete, setLoadingDelete] = useState(false);
+	const [error, setError] = useState(false);
+
+	const handleDelete = async () => {
+		setLoadingDelete(true);
+		try {
+			const success = await onDeletePost(post);
+
+			if (!success) {
+				throw new Error('Cant delete post');
+			}
+
+			console.log('Post deleted successfully');
+		} catch (err: any) {
+			console.log('handleDelete error: ', err);
+			setError(err.message);
+		}
+		setLoadingDelete(false);
+	};
 	return (
 		<Flex
 			border='1px solid'
@@ -85,6 +106,12 @@ const PostItem = ({
 				/>
 			</Flex>
 			<Flex direction='column' width='100%'>
+				{error && (
+					<Alert status='error'>
+						<AlertIcon />
+						<Text mr={2}>{error}</Text>
+					</Alert>
+				)}
 				<Stack spacing={1} padding='10px'>
 					<Stack direction='row' spacing={0.6} align='center' fontSize='9pt'>
 						{/* Home Page Check */}
@@ -159,10 +186,16 @@ const PostItem = ({
 								bg: 'gray.200',
 							}}
 							cursor='pointer'
-							onClick={onDeletePost}
+							onClick={handleDelete}
 						>
-							<Icon as={AiOutlineDelete} mr={2} />
-							<Text fontSize='9pt'>Delete</Text>
+							{loadingDelete ? (
+								<Spinner size='sm' />
+							) : (
+								<>
+									<Icon as={AiOutlineDelete} mr={2} />
+									<Text fontSize='9pt'>Delete</Text>
+								</>
+							)}
 						</Flex>
 					)}
 				</Flex>
