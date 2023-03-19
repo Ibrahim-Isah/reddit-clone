@@ -30,7 +30,7 @@ type Props = {
 	post: Post;
 	userIsCreator: boolean;
 	userVoteValue?: number;
-	onVote: () => void;
+	onVote: (post: Post, vote: number, communityId: string) => void;
 	onSelectPost: () => void;
 	onDeletePost: (post: Post) => Promise<boolean>;
 };
@@ -89,7 +89,7 @@ const PostItem = ({
 					}
 					color={userVoteValue === 1 ? 'brand.100' : 'gray.400'}
 					fontSize={22}
-					onClick={onVote}
+					onClick={() => onVote(post, 1, post.communityId)}
 					cursor='pointer'
 				/>
 				<Text fontSize='9pt'>{post.voteStatus}</Text>
@@ -102,7 +102,7 @@ const PostItem = ({
 					color={userVoteValue === -1 ? '#4379ff' : 'gray.400'}
 					fontSize={22}
 					cursor='pointer'
-					onClick={onVote}
+					onClick={() => onVote(post, -1, post.communityId)}
 				/>
 			</Flex>
 			<Flex direction='column' width='100%'>
