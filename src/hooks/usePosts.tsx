@@ -33,7 +33,6 @@ const usePosts = () => {
 			console.log('onDeletePost error: ', err);
 			return false;
 		}
-		return true;
 	};
 
 	return {

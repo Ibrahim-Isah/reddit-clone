@@ -15,6 +15,7 @@ import { BsLink45Deg, BsMic } from 'react-icons/bs';
 import { IoDocumentText, IoImageOutline } from 'react-icons/io5';
 import { Post } from '../../atoms/postsAtom';
 import { firestore, storage } from '../../firebase/clientApp';
+import useSelectFile from '../../hooks/useSelectFile';
 import ImageUpload from './PostForm/ImageUpload';
 import TextInput from './PostForm/TextInput';
 import TabItem from './TabItem';
@@ -53,6 +54,7 @@ export type TabProps = {
 
 const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
 	const router = useRouter();
+	const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile();
 	const [selectedTab, setSelectedTab] = React.useState<string>(
 		formTabs[0].title
 	);
@@ -60,7 +62,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
 		title: '',
 		body: '',
 	});
-	const [selectedFile, setSelectedFile] = React.useState<string>();
 	const [loading, setLoading] = React.useState<boolean>(false);
 	const [error, setError] = React.useState<boolean>(false);
 
@@ -98,19 +99,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
 		}
 		setLoading(false);
 	};
-	const onSelectImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const reader = new FileReader();
-		if (e.target.files) {
-			reader.readAsDataURL(e.target.files[0]);
-			reader.onload = (readerEvent) => {
-				if (readerEvent.target?.result) {
-					setSelectedFile(readerEvent.target.result as string);
-				}
-			};
-			// const file = e.target.files[0];
-			// setSelectedFile(URL.createObjectURL(file));
-		}
-	};
+
 	const onTextChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
@@ -144,18 +133,12 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
 				{selectedTab === 'Images & Video' && (
 					<ImageUpload
 						setSelectedFile={setSelectedFile}
-						onSelectImage={onSelectImage}
+						onSelectImage={onSelectFile}
 						setSelectedTab={setSelectedTab}
 						selectedFile={selectedFile}
 					/>
 				)}
 			</Flex>
-			{error && (
-				<Alert status='error'>
-					<AlertIcon />
-					<Text mr={2}>Something went wrong</Text>
-				</Alert>
-			)}
 		</Flex>
 	);
 };
